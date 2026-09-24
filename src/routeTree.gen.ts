@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ActiviteRouteImport } from './routes/activite'
 import { Route as PlanningRouteImport } from './routes/planning'
+import { Route as ReglesRouteImport } from './routes/regles'
 import { Route as ValidationRouteImport } from './routes/validation'
 import { Route as DemandesIndexRouteImport } from './routes/demandes.index'
 import { Route as DemandesIdRouteImport } from './routes/demandes.$id'
@@ -29,6 +30,11 @@ const ActiviteRoute = ActiviteRouteImport.update({
 const PlanningRoute = PlanningRouteImport.update({
   id: '/planning',
   path: '/planning',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReglesRoute = ReglesRouteImport.update({
+  id: '/regles',
+  path: '/regles',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ValidationRoute = ValidationRouteImport.update({
@@ -51,6 +57,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/activite': typeof ActiviteRoute
   '/planning': typeof PlanningRoute
+  '/regles': typeof ReglesRoute
   '/validation': typeof ValidationRoute
   '/demandes/$id': typeof DemandesIdRoute
   '/demandes/': typeof DemandesIndexRoute
@@ -59,6 +66,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/activite': typeof ActiviteRoute
   '/planning': typeof PlanningRoute
+  '/regles': typeof ReglesRoute
   '/validation': typeof ValidationRoute
   '/demandes/$id': typeof DemandesIdRoute
   '/demandes': typeof DemandesIndexRoute
@@ -68,6 +76,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/activite': typeof ActiviteRoute
   '/planning': typeof PlanningRoute
+  '/regles': typeof ReglesRoute
   '/validation': typeof ValidationRoute
   '/demandes/$id': typeof DemandesIdRoute
   '/demandes/': typeof DemandesIndexRoute
@@ -78,6 +87,7 @@ export interface FileRouteTypes {
     | '/'
     | '/activite'
     | '/planning'
+    | '/regles'
     | '/validation'
     | '/demandes/$id'
     | '/demandes/'
@@ -86,6 +96,7 @@ export interface FileRouteTypes {
     | '/'
     | '/activite'
     | '/planning'
+    | '/regles'
     | '/validation'
     | '/demandes/$id'
     | '/demandes'
@@ -94,6 +105,7 @@ export interface FileRouteTypes {
     | '/'
     | '/activite'
     | '/planning'
+    | '/regles'
     | '/validation'
     | '/demandes/$id'
     | '/demandes/'
@@ -103,6 +115,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ActiviteRoute: typeof ActiviteRoute
   PlanningRoute: typeof PlanningRoute
+  ReglesRoute: typeof ReglesRoute
   ValidationRoute: typeof ValidationRoute
   DemandesIdRoute: typeof DemandesIdRoute
   DemandesIndexRoute: typeof DemandesIndexRoute
@@ -129,6 +142,13 @@ declare module '@tanstack/react-router' {
       path: '/planning'
       fullPath: '/planning'
       preLoaderRoute: typeof PlanningRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/regles': {
+      id: '/regles'
+      path: '/regles'
+      fullPath: '/regles'
+      preLoaderRoute: typeof ReglesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/validation': {
@@ -159,6 +179,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ActiviteRoute: ActiviteRoute,
   PlanningRoute: PlanningRoute,
+  ReglesRoute: ReglesRoute,
   ValidationRoute: ValidationRoute,
   DemandesIdRoute: DemandesIdRoute,
   DemandesIndexRoute: DemandesIndexRoute,
