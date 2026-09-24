@@ -22,7 +22,7 @@ import { useStore } from "@/lib/store";
 export const Route = createFileRoute("/demandes/")({
   head: () => ({
     meta: [
-      { title: "Demandes de prélèvement — QualiUp AI Back-Office" },
+      { title: "Demandes & validation — QualiUp" },
       {
         name: "description",
         content:
@@ -33,6 +33,8 @@ export const Route = createFileRoute("/demandes/")({
         property: "og:description",
         content: "Demandes structurées issues des canaux client, prêtes pour validation et planification.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: DemandesPage,
@@ -68,9 +70,9 @@ function DemandesPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Opérations"
-        title="Demandes de prélèvement"
-        description="File opérationnelle générée par l'agent Prélèvements. Chaque ligne est un enregistrement structuré — aucune conversation n'est stockée."
+        eyebrow="Supervision humaine"
+        title="Demandes & validation"
+        description="Vérifiez le message reçu, les informations extraites et la proposition de l’agent avant envoi au client."
       />
 
       <Toolbar

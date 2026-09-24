@@ -20,7 +20,7 @@ function Dashboard() {
   const store = useStore();
   const planned = store.requests.filter((r) => r.status === "planifiée").length;
   const pending = store.requests.filter((r) => r.status === "à valider").length;
-  const incomplete = store.requests.filter((r) => r.status === "incomplète").length;
+  const incomplete = store.requests.filter((r) => r.status === "clarification").length;
   const sent = store.sentMessages.filter((m) => m.status === "envoyé").length;
   const whatsapp = store.requests.filter((r) => r.source === "WhatsApp").length;
   return <>
