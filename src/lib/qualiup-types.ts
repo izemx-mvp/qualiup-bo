@@ -85,6 +85,7 @@ export interface SamplingRequest {
   status: RequestStatus;
   confidence: number;
   notes: string;
+  originalMessage?: string;
   extraction: ExtractionField[];
   recommendation: Recommendation;
 }
@@ -199,6 +200,17 @@ export interface CommunicationTemplate {
   channel: "WhatsApp" | "Email" | "SMS";
   body: string;
   active: boolean;
+  approvalMode: "automatique" | "validation humaine";
+}
+
+export interface SentMessage {
+  id: string;
+  sentAt: string;
+  customer: string;
+  requestRef: string;
+  template: string;
+  channel: "WhatsApp";
+  status: "envoyé" | "à valider";
 }
 
 export interface IntegrationDetail {

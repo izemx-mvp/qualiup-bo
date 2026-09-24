@@ -80,7 +80,7 @@ function ReglesPage() {
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-semibold">{r.name}</span>
-                        <span className="rounded-full border bg-surface px-2 py-0.5 text-[11px]">{r.category}</span>
+                        <span className="rounded-full border bg-surface px-2 py-0.5 text-[11px]">{r.scope}</span>
                         <StatusBadge status={r.active ? "actif" : "inactif"} />
                       </div>
                       <p className="mt-1 text-xs text-muted-foreground">
@@ -126,7 +126,7 @@ function ReglesPage() {
                   variant="ghost"
                   className="h-7 w-7"
                   disabled={i === 0}
-                  onClick={() => store.movePriorityRule(p.id, "up")}
+                  onClick={() => store.movePriorityRule(p.id, -1)}
                 >
                   <ArrowUp className="h-3.5 w-3.5" />
                 </Button>
@@ -135,7 +135,7 @@ function ReglesPage() {
                   variant="ghost"
                   className="h-7 w-7"
                   disabled={i === store.priorityRules.length - 1}
-                  onClick={() => store.movePriorityRule(p.id, "down")}
+                  onClick={() => store.movePriorityRule(p.id, 1)}
                 >
                   <ArrowDown className="h-3.5 w-3.5" />
                 </Button>
@@ -186,7 +186,7 @@ function ReglesPage() {
             <Button
               disabled={!draft.name || !draft.condition || !draft.action}
               onClick={() => {
-                store.addBusinessRule({ ...draft, active: true });
+                store.addBusinessRule({ name: draft.name, scope: draft.category, condition: draft.condition, action: draft.action, active: true });
                 setDraft({ name: "", category: "Planification", condition: "", action: "" });
                 setOpen(false);
               }}

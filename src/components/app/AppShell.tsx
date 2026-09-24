@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Bell, Bot, Menu, ShieldCheck, X } from "lucide-react";
+import { Bell, Bot, Menu, Sparkles, X } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import logoAsset from "@/assets/qualiup-logo.png.asset.json";
 import { Badge } from "@/components/ui/badge";
@@ -23,22 +23,22 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
 
   return (
     <div className="flex h-full flex-col bg-sidebar text-sidebar-foreground">
-      <div className="flex items-center gap-3 border-b border-sidebar-border px-5 py-4">
-        <div className="flex h-10 w-10 items-center justify-center rounded-md bg-white/95 p-1">
+      <div className="flex items-center gap-3 px-5 py-6">
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-surface p-1 shadow-float">
           <img src={logoAsset.url} alt="QualiUp" className="h-full w-full object-contain" />
         </div>
         <div className="leading-tight">
           <div className="font-display text-sm font-bold tracking-wide">QUALIUP</div>
           <div className="text-[11px] uppercase tracking-[0.18em] text-sidebar-primary">
-            AI Control Center
+             Agent de prélèvement
           </div>
         </div>
       </div>
 
       <ScrollArea className="flex-1">
-        <nav className="px-3 py-4">
+         <nav className="px-3 py-2">
           {NAV.filter((section) => can(section.key)).map((section) => (
-            <div key={section.key} className="mb-5">
+             <div key={section.key} className="mb-4">
               <div className="px-2 pb-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-sidebar-foreground/45">
                 {section.title}
               </div>
@@ -49,7 +49,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
                     to={item.to}
                     onClick={onNavigate}
                     activeOptions={{ exact: item.to === "/" }}
-                    className="group flex items-center gap-2.5 rounded-md px-2.5 py-2 text-[13px] font-medium text-sidebar-foreground/75 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[status=active]:bg-sidebar-accent data-[status=active]:text-sidebar-accent-foreground"
+                    className="group flex items-center gap-3 rounded-lg border border-transparent px-3 py-3 text-[13px] font-medium text-sidebar-foreground/70 transition-all duration-200 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[status=active]:border-sidebar-border data-[status=active]:bg-sidebar-accent data-[status=active]:text-sidebar-accent-foreground data-[status=active]:shadow-float"
                   >
                     <item.icon className="h-4 w-4 shrink-0 opacity-80" />
                     <span className="truncate">{item.label}</span>
@@ -78,7 +78,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const pending = actions.filter((a) => a.status === "en attente").length;
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="app-canvas flex min-h-screen bg-background">
       <aside className="hidden w-64 shrink-0 lg:block">
         <div className="fixed inset-y-0 left-0 w-64">
           <SidebarContent />
@@ -103,7 +103,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       )}
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-40 flex h-14 items-center gap-3 border-b bg-surface/95 px-4 backdrop-blur lg:px-6">
+         <header className="sticky top-0 z-40 flex h-16 items-center gap-3 border-b bg-surface/80 px-4 backdrop-blur-xl lg:px-8">
           <Button
             variant="ghost"
             size="icon"
@@ -114,16 +114,16 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Menu className="h-5 w-5" />
           </Button>
 
-          <div className="hidden items-center gap-2 text-xs text-muted-foreground sm:flex">
-            <ShieldCheck className="h-3.5 w-3.5 text-success" />
-            Environnement de démonstration · données opérationnelles simulées
+           <div className="hidden items-center gap-2 text-xs font-medium text-muted-foreground sm:flex">
+             <Sparkles className="h-3.5 w-3.5 text-accent-foreground" />
+             Agent IA actif · supervision humaine
           </div>
 
           <div className="ml-auto flex items-center gap-2">
             <Button asChild variant="ghost" size="sm" className="relative gap-2">
-              <Link to="/validation">
+              <Link to="/demandes">
                 <Bell className="h-4 w-4" />
-                <span className="hidden sm:inline">Validation</span>
+                 <span className="hidden sm:inline">À valider</span>
                 {pending > 0 && (
                   <Badge className="ml-1 bg-accent text-accent-foreground">{pending}</Badge>
                 )}
@@ -166,8 +166,9 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
         </header>
 
-        <main key={pathname} className="min-w-0 flex-1 px-4 py-6 lg:px-8">
-          {children}
+         <main key={pathname} className="relative min-w-0 flex-1 overflow-hidden px-4 py-6 lg:px-8 lg:py-8">
+           <div className="content-grid pointer-events-none absolute inset-0" />
+           <div className="relative mx-auto max-w-[1480px] animate-page-in">{children}</div>
         </main>
       </div>
     </div>

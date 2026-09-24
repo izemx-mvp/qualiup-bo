@@ -36,6 +36,8 @@ export const Route = createFileRoute("/demandes/$id")({
         property: "og:description",
         content: "Extraction IA, recommandation de créneau et validation humaine.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: RequestDetail,
@@ -103,6 +105,11 @@ function RequestDetail() {
 
       <div className="grid gap-4 xl:grid-cols-3">
         <div className="space-y-4 xl:col-span-2">
+          <Panel title="Message d’origine" description="Message initial reçu sur WhatsApp — aucun fil de conversation n’est conservé.">
+            <blockquote className="rounded-lg border-l-4 border-accent bg-muted/50 p-4 text-sm leading-6">
+              {request.originalMessage ?? `Demande reçue via ${request.source} pour ${request.analysisType}.`}
+            </blockquote>
+          </Panel>
           <div className="grid gap-4 md:grid-cols-2">
             <Panel title="Informations client">
               <KeyValue
@@ -143,7 +150,7 @@ function RequestDetail() {
 
           <Panel
             title="Informations détectées par l'IA"
-            description="Champs extraits automatiquement, avec niveau de confiance. Le contenu de la conversation d'origine reste hors du back-office."
+             description="Champs extraits automatiquement du message initial, avec niveau de confiance."
           >
             <div className="space-y-2">
               {request.extraction.map((f) => (
