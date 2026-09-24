@@ -28,6 +28,8 @@ import type {
   Site,
   SystemLog,
   UserRole,
+  LabInfo,
+  RequiredField,
 } from "./qualiup-types";
 
 let seq = 1000;
@@ -50,6 +52,8 @@ interface State {
   faqs: Faq[];
   documents: KbDocument[];
   templates: CommunicationTemplate[];
+  labs: LabInfo[];
+  requiredFields: RequiredField[];
   sentMessages: SentMessage[];
   integrations: Integration[];
   aiEvents: AiEvent[];
@@ -80,6 +84,8 @@ const initialState: State = {
   documents: seed.kbDocuments,
   templates: seed.templates,
   sentMessages: seed.sentMessages,
+  labs: seed.labInfos,
+  requiredFields: seed.requiredFields,
   integrations: seed.integrations,
   aiEvents: seed.aiEvents,
   systemLogs: seed.systemLogs,
@@ -138,6 +144,17 @@ interface StoreApi extends State {
   addTemplate: (tpl: Omit<CommunicationTemplate, "id">) => void;
   updateTemplate: (id: string, patch: Partial<CommunicationTemplate>) => void;
   deleteTemplate: (id: string) => void;
+  updateDocument: (id: string, patch: Partial<KbDocument>) => void;
+  addLab: (l: Omit<LabInfo, "id">) => void;
+  updateLab: (id: string, patch: Partial<LabInfo>) => void;
+  deleteLab: (id: string) => void;
+  addRequiredField: (label: string) => void;
+  updateRequiredField: (id: string, patch: Partial<RequiredField>) => void;
+  deleteRequiredField: (id: string) => void;
+  notifyCustomer: (requestRef: string, templateName: string) => void;
+  approveMessage: (id: string) => void;
+  cancelMessage: (id: string) => void;
+  relaunchRequest: (requestRef: string, missing: string) => void;
   // preleveurs & clients
   updatePreleveur: (id: string, patch: Partial<Preleveur>) => void;
   addPreleveur: (p: Omit<Preleveur, "id">) => void;
@@ -208,7 +225,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setState((s) => ({ ...s, systemLogs: [{ id: uid("l"), ...log }, ...s.systemLogs] }));
   }, []);
 
-  const api: StoreApi = {
+  // eslint-disable-next-line prefer-const
+  let api: StoreApi;
+  api = {
     ...state,
     currentUser,
     setCurrentUser: (id) => {
@@ -281,6 +300,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         status: decision === "refusée" ? "refusé" : "succès",
       });
       toast.success(`Action ${label}. Décision enregistrée dans l'audit.`);
+      const ref = state.actions.find((a) => a.id === id)?.requestRef;
+      if (ref && decision !== "refusée") api.notifyCustomer(ref, "Confirmation de prélèvement");
     },
 
     toggleAgent: (id) => {
@@ -413,6 +434,74 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       if (t && p.active !== undefined)
         logAudit("Changement d'état modèle", t.name, t.active ? "actif" : "inactif", p.active ? "actif" : "inactif");
       toast.success("Modèle mis à jour.");
+    },
+    updateDocument: (id, p) => {
+      patch({ documents: state.documents.map((d) => (d.id === id ? { ...d, ...p } : d)), knowledge: { ...state.knowledge, status: "désynchronisée" } });
+      toast.success("Document mis à jour.");
+    },
+    addLab: (l) => {
+      patch({ labs: [...state.labs, { ...l, id: uid("lab") }] });
+      logAudit("Ajout information pratique", l.name, "—", "ajoutée");
+      toast.success("Laboratoire ajouté.");
+    },
+    updateLab: (id, p) => {
+      patch({ labs: state.labs.map((l) => (l.id === id ? { ...l, ...p } : l)) });
+      toast.success("Informations pratiques mises à jour.");
+    },
+    deleteLab: (id) => {
+      const l = state.labs.find((x) => x.id === id);
+      patch({ labs: state.labs.filter((x) => x.id !== id) });
+      logAudit("Suppression information pratique", l?.name ?? id, "active", "supprimée");
+      toast.success("Laboratoire supprimé.");
+    },
+    addRequiredField: (label) => {
+      patch({ requiredFields: [...state.requiredFields, { id: uid("rf"), label, active: true }] });
+      toast.success("Information obligatoire ajoutée.");
+    },
+    updateRequiredField: (id, p) => {
+      patch({ requiredFields: state.requiredFields.map((f) => (f.id === id ? { ...f, ...p } : f)) });
+      toast.success("Information obligatoire mise à jour.");
+    },
+    deleteRequiredField: (id) => {
+      patch({ requiredFields: state.requiredFields.filter((f) => f.id !== id) });
+      toast.success("Information obligatoire supprimée.");
+    },
+    notifyCustomer: (requestRef, templateName) => {
+      const req = state.requests.find((r) => r.ref === requestRef);
+      const tpl = state.templates.find((t) => t.name === templateName);
+      if (!req || (tpl && !tpl.active)) return;
+      const manual = tpl?.approvalMode === "validation humaine";
+      setState((s) => ({
+        ...s,
+        sentMessages: [
+          { id: uid("m"), sentAt: nowStamp(), customer: s.customers.find((c) => c.id === req.customerId)?.name ?? "—", requestRef, template: templateName, channel: "WhatsApp", status: manual ? "à valider" : "envoyé" },
+          ...s.sentMessages,
+        ],
+      }));
+      toast.info(manual ? `« ${templateName} » en attente de validation avant envoi.` : `WhatsApp « ${templateName} » envoyé au client.`);
+    },
+    approveMessage: (id) => {
+      patch({ sentMessages: state.sentMessages.map((m) => (m.id === id ? { ...m, status: "envoyé", sentAt: nowStamp() } : m)) });
+      logAudit("Validation message WhatsApp", id, "à valider", "envoyé");
+      toast.success("Message validé et envoyé sur WhatsApp.");
+    },
+    cancelMessage: (id) => {
+      patch({ sentMessages: state.sentMessages.filter((m) => m.id !== id) });
+      toast.success("Message annulé : il ne sera pas envoyé.");
+    },
+    relaunchRequest: (requestRef, missing) => {
+      const req = state.requests.find((r) => r.ref === requestRef);
+      if (!req) return;
+      setState((s) => ({
+        ...s,
+        requests: s.requests.map((r) => (r.ref === requestRef ? { ...r, notes: `Relance envoyée ${nowStamp()} — ${missing}` } : r)),
+        sentMessages: [
+          { id: uid("m"), sentAt: nowStamp(), customer: s.customers.find((c) => c.id === req.customerId)?.name ?? "—", requestRef, template: "Demande de clarification", channel: "WhatsApp", status: "envoyé" },
+          ...s.sentMessages,
+        ],
+      }));
+      logAudit("Relance client", requestRef, "incomplète", "relance envoyée");
+      toast.success(`Relance WhatsApp envoyée pour ${requestRef}.`);
     },
     deleteTemplate: (id) => {
       const t = state.templates.find((x) => x.id === id);
