@@ -289,6 +289,7 @@ export interface PlanningConfig {
   travelBuffer: number;
   maxDaily: number;
   holidays: string;
+  groupBySite: boolean;
 }
 
 export interface CalendarConfig {
@@ -328,4 +329,19 @@ export interface KnowledgeStatus {
   lastSync: string;
   indexedChunks: number;
   status: "à jour" | "désynchronisée" | "indexation";
+}
+
+export interface LabInfo {
+  id: string;
+  name: string;
+  address: string;
+  phone: string;
+  hours: string;
+  email: string;
+}
+
+export interface RequiredField {
+  id: string;
+  label: string;
+  active: boolean;
 }

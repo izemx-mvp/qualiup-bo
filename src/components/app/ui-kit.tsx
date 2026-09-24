@@ -1,4 +1,15 @@
 import { Download, Search } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import type { ReactNode } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -108,6 +119,9 @@ const STATUS_TONES: Record<string, string> = {
   actif: "bg-success/15 text-success border-success/30",
   inactif: "bg-muted text-muted-foreground border-border",
   "à jour": "bg-success/15 text-success border-success/30",
+  envoyé: "bg-success/15 text-success border-success/30",
+  automatique: "bg-info/10 text-info border-info/25",
+  "validation humaine": "bg-warning/15 text-warning-foreground border-warning/40",
   désynchronisée: "bg-warning/15 text-warning-foreground border-warning/40",
 };
 
@@ -240,4 +254,34 @@ export function exportCsv(filename: string, rows: Record<string, string | number
   a.download = filename;
   a.click();
   URL.revokeObjectURL(url);
+}
+
+export function ConfirmDelete({
+  title,
+  description,
+  onConfirm,
+  children,
+}: {
+  title: string;
+  description?: string;
+  onConfirm: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{title}</AlertDialogTitle>
+          <AlertDialogDescription>{description ?? "Cette action est définitive."}</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Annuler</AlertDialogCancel>
+          <AlertDialogAction onClick={onConfirm} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+            Supprimer
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
 }

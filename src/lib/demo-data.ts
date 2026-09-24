@@ -781,6 +781,7 @@ export const planningConfig: PlanningConfig = {
   buffer: 15,
   travelBuffer: 30,
   maxDaily: 8,
+  groupBySite: true,
   holidays: "01/01, 11/01, 01/05, 30/07, 14/08, 20/08, 21/08, 06/11, 18/11",
 };
 
@@ -855,4 +856,17 @@ export const revenueByService = [
   { service: "Eau potable", ca: 98200 },
   { service: "Surfaces / hygiène", ca: 64300 },
   { service: "Résidus", ca: 28800 },
+];
+
+export const labInfos: import("./qualiup-types").LabInfo[] = [
+  { id: "lab1", name: "Laboratoire QualiUp Agadir", address: "Zone industrielle Tassila, Agadir", phone: "+212 5 28 33 44 55", hours: "Lun–Ven 08:00–18:00 · Sam 08:00–12:00", email: "agadir@qualiup.ma" },
+  { id: "lab2", name: "Laboratoire QualiUp Casablanca", address: "Bd Zerktouni, Casablanca", phone: "+212 5 22 44 55 66", hours: "Lun–Ven 08:00–18:00", email: "casablanca@qualiup.ma" },
+];
+
+export const requiredFields: import("./qualiup-types").RequiredField[] = [
+  { id: "rf1", label: "Client et contact", active: true },
+  { id: "rf2", label: "Site et adresse", active: true },
+  { id: "rf3", label: "Type d’analyse", active: true },
+  { id: "rf4", label: "Nombre d’échantillons", active: true },
+  { id: "rf5", label: "Date ou délai souhaité", active: true },
 ];

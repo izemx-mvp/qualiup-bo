@@ -82,6 +82,7 @@ function RequestDetail() {
       store.decideAction(linkedAction.id, "approuvée");
     } else {
       store.updateRequest(request.id, { status: "planifiée" });
+      store.notifyCustomer(request.ref, "Confirmation de prélèvement");
     }
   };
 
@@ -189,7 +190,7 @@ function RequestDetail() {
             <div className="mt-4 grid gap-2">
               <Button
                 className="gap-1.5"
-                disabled={request.status === "planifiée" || request.status === "refusée"}
+                disabled={request.status === "planifiée" || request.status === "refusée" || request.status === "clarification"}
                 onClick={approve}
               >
                 <Check className="h-4 w-4" /> Approuver
@@ -220,9 +221,6 @@ function RequestDetail() {
                 },
               ]}
             />
-            <Button asChild variant="ghost" size="sm" className="mt-3 w-full">
-              <Link to="/validation">Ouvrir le centre de validation</Link>
-            </Button>
           </Panel>
         </div>
       </div>
@@ -268,7 +266,7 @@ function RequestDetail() {
               onClick={() => {
                 store.updateRequest(request.id, {
                   recommendation: { ...request.recommendation, ...draft },
-                  status: "validée",
+                  status: "planifiée",
                 });
                 store.logAudit(
                   "Modification proposition IA",
@@ -278,6 +276,7 @@ function RequestDetail() {
                 );
                 if (linkedAction && linkedAction.status === "en attente")
                   store.decideAction(linkedAction.id, "modifiée", "Créneau ajusté manuellement");
+                else store.notifyCustomer(request.ref, "Confirmation de prélèvement");
                 setEditOpen(false);
               }}
             >
