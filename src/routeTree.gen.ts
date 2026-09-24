@@ -11,6 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ActiviteRouteImport } from './routes/activite'
+import { Route as ConnaissancesRouteImport } from './routes/connaissances'
+import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as PlanningRouteImport } from './routes/planning'
 import { Route as ReglesRouteImport } from './routes/regles'
 import { Route as ValidationRouteImport } from './routes/validation'
@@ -25,6 +27,16 @@ const IndexRoute = IndexRouteImport.update({
 const ActiviteRoute = ActiviteRouteImport.update({
   id: '/activite',
   path: '/activite',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConnaissancesRoute = ConnaissancesRouteImport.update({
+  id: '/connaissances',
+  path: '/connaissances',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PlanningRoute = PlanningRouteImport.update({
@@ -56,6 +68,8 @@ const DemandesIdRoute = DemandesIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/activite': typeof ActiviteRoute
+  '/connaissances': typeof ConnaissancesRoute
+  '/notifications': typeof NotificationsRoute
   '/planning': typeof PlanningRoute
   '/regles': typeof ReglesRoute
   '/validation': typeof ValidationRoute
@@ -65,6 +79,8 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/activite': typeof ActiviteRoute
+  '/connaissances': typeof ConnaissancesRoute
+  '/notifications': typeof NotificationsRoute
   '/planning': typeof PlanningRoute
   '/regles': typeof ReglesRoute
   '/validation': typeof ValidationRoute
@@ -75,6 +91,8 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/activite': typeof ActiviteRoute
+  '/connaissances': typeof ConnaissancesRoute
+  '/notifications': typeof NotificationsRoute
   '/planning': typeof PlanningRoute
   '/regles': typeof ReglesRoute
   '/validation': typeof ValidationRoute
@@ -86,6 +104,8 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/activite'
+    | '/connaissances'
+    | '/notifications'
     | '/planning'
     | '/regles'
     | '/validation'
@@ -95,6 +115,8 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/activite'
+    | '/connaissances'
+    | '/notifications'
     | '/planning'
     | '/regles'
     | '/validation'
@@ -104,6 +126,8 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/activite'
+    | '/connaissances'
+    | '/notifications'
     | '/planning'
     | '/regles'
     | '/validation'
@@ -114,6 +138,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ActiviteRoute: typeof ActiviteRoute
+  ConnaissancesRoute: typeof ConnaissancesRoute
+  NotificationsRoute: typeof NotificationsRoute
   PlanningRoute: typeof PlanningRoute
   ReglesRoute: typeof ReglesRoute
   ValidationRoute: typeof ValidationRoute
@@ -135,6 +161,20 @@ declare module '@tanstack/react-router' {
       path: '/activite'
       fullPath: '/activite'
       preLoaderRoute: typeof ActiviteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/connaissances': {
+      id: '/connaissances'
+      path: '/connaissances'
+      fullPath: '/connaissances'
+      preLoaderRoute: typeof ConnaissancesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/planning': {
@@ -178,6 +218,8 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ActiviteRoute: ActiviteRoute,
+  ConnaissancesRoute: ConnaissancesRoute,
+  NotificationsRoute: NotificationsRoute,
   PlanningRoute: PlanningRoute,
   ReglesRoute: ReglesRoute,
   ValidationRoute: ValidationRoute,
