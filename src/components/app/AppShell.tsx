@@ -121,9 +121,9 @@ export function AppShell({ children }: { children: ReactNode }) {
 
           <div className="ml-auto flex items-center gap-2">
             <Button asChild variant="ghost" size="sm" className="relative gap-2">
-              <Link to="/validation">
+              <Link to="/demandes">
                 <Bell className="h-4 w-4" />
-                <span className="hidden sm:inline">Validation</span>
+                 <span className="hidden sm:inline">À valider</span>
                 {pending > 0 && (
                   <Badge className="ml-1 bg-accent text-accent-foreground">{pending}</Badge>
                 )}

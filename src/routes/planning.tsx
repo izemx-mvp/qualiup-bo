@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CalendarCog, Clock3, MapPinned, Users } from "lucide-react";
+import type { ReactNode } from "react";
 import { PageHeader, Panel, StatCard } from "@/components/app/ui-kit";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -31,4 +32,4 @@ function PlanningPage() {
    <Panel title="Calendrier connecté" description="Choisissez la source de disponibilité consultée par l’agent."><div className="space-y-5"><Field label="Fournisseur"><Select value={store.calendar.provider} onValueChange={(v)=>store.updateCalendar({provider:v as typeof store.calendar.provider})}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent><SelectItem value="QualiUp interne">Calendrier interne</SelectItem><SelectItem value="Google Calendar">Google Calendar</SelectItem><SelectItem value="Microsoft Outlook">Microsoft Outlook</SelectItem></SelectContent></Select></Field><div className="rounded-lg border bg-primary p-5 text-primary-foreground"><CalendarCog className="mb-8 h-6 w-6"/><p className="text-sm font-semibold">Synchronisation bidirectionnelle</p><p className="mt-1 text-xs text-primary-foreground/70">Les indisponibilités sont prises en compte avant toute proposition.</p></div></div></Panel>
   </div></>;
 }
-function Field({label,children}:{label:string;children:React.ReactNode}){return <div className="space-y-2"><Label>{label}</Label>{children}</div>}
+function Field({label,children}:{label:string;children:ReactNode}){return <div className="space-y-2"><Label>{label}</Label>{children}</div>}
