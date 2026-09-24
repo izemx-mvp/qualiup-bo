@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ActiviteRouteImport } from './routes/activite'
 import { Route as ValidationRouteImport } from './routes/validation'
 import { Route as DemandesIndexRouteImport } from './routes/demandes.index'
 import { Route as DemandesIdRouteImport } from './routes/demandes.$id'
@@ -17,6 +18,11 @@ import { Route as DemandesIdRouteImport } from './routes/demandes.$id'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ActiviteRoute = ActiviteRouteImport.update({
+  id: '/activite',
+  path: '/activite',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ValidationRoute = ValidationRouteImport.update({
@@ -37,12 +43,14 @@ const DemandesIdRoute = DemandesIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/activite': typeof ActiviteRoute
   '/validation': typeof ValidationRoute
   '/demandes/$id': typeof DemandesIdRoute
   '/demandes/': typeof DemandesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/activite': typeof ActiviteRoute
   '/validation': typeof ValidationRoute
   '/demandes/$id': typeof DemandesIdRoute
   '/demandes': typeof DemandesIndexRoute
@@ -50,20 +58,28 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/activite': typeof ActiviteRoute
   '/validation': typeof ValidationRoute
   '/demandes/$id': typeof DemandesIdRoute
   '/demandes/': typeof DemandesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/validation' | '/demandes/$id' | '/demandes/'
+  fullPaths: '/' | '/activite' | '/validation' | '/demandes/$id' | '/demandes/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/validation' | '/demandes/$id' | '/demandes'
-  id: '__root__' | '/' | '/validation' | '/demandes/$id' | '/demandes/'
+  to: '/' | '/activite' | '/validation' | '/demandes/$id' | '/demandes'
+  id:
+    | '__root__'
+    | '/'
+    | '/activite'
+    | '/validation'
+    | '/demandes/$id'
+    | '/demandes/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ActiviteRoute: typeof ActiviteRoute
   ValidationRoute: typeof ValidationRoute
   DemandesIdRoute: typeof DemandesIdRoute
   DemandesIndexRoute: typeof DemandesIndexRoute
@@ -76,6 +92,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/activite': {
+      id: '/activite'
+      path: '/activite'
+      fullPath: '/activite'
+      preLoaderRoute: typeof ActiviteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/validation': {
@@ -104,6 +127,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ActiviteRoute: ActiviteRoute,
   ValidationRoute: ValidationRoute,
   DemandesIdRoute: DemandesIdRoute,
   DemandesIndexRoute: DemandesIndexRoute,
