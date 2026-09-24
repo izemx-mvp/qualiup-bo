@@ -119,6 +119,9 @@ const STATUS_TONES: Record<string, string> = {
   actif: "bg-success/15 text-success border-success/30",
   inactif: "bg-muted text-muted-foreground border-border",
   "à jour": "bg-success/15 text-success border-success/30",
+  envoyé: "bg-success/15 text-success border-success/30",
+  automatique: "bg-info/10 text-info border-info/25",
+  "validation humaine": "bg-warning/15 text-warning-foreground border-warning/40",
   désynchronisée: "bg-warning/15 text-warning-foreground border-warning/40",
 };
 
