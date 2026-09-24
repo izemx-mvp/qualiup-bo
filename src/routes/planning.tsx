@@ -123,7 +123,7 @@ function PlanningPage() {
               <div><Label>Regrouper par site</Label><p className="text-xs text-muted-foreground">L’agent propose en priorité les créneaux proches d’un prélèvement déjà prévu sur le même site.</p></div>
               <Switch checked={p.groupBySite} onCheckedChange={(v) => setP({ ...p, groupBySite: v })} />
             </div>
-            <Field label="Jours fériés (jj/mm, séparés par des virgules)"><Input value={p.holidays} onChange={(e) => setP({ ...p, holidays: e.target.value })} /></Field>
+            <div className="sm:col-span-2"><Field label="Jours fériés (jj/mm, séparés par des virgules)"><Input value={p.holidays} onChange={(e) => setP({ ...p, holidays: e.target.value })} /></Field></div>
           </div>
           {invalid && <p className="mt-4 text-xs font-medium text-destructive">Vérifiez les horaires (fin après début), la durée (≥ 15 min), la capacité et au moins un jour travaillé.</p>}
           {dirty && !invalid && <p className="mt-4 text-xs font-medium text-warning-foreground">Modifications non enregistrées.</p>}
