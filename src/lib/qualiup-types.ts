@@ -85,7 +85,7 @@ export interface SamplingRequest {
   status: RequestStatus;
   confidence: number;
   notes: string;
-  originalMessage: string;
+  originalMessage?: string;
   extraction: ExtractionField[];
   recommendation: Recommendation;
 }
