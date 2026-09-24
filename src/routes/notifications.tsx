@@ -154,7 +154,7 @@ function NotificationsPage() {
               <span className="num text-xs text-muted-foreground">{m.sentAt}</span>
               <span><b>{m.customer}</b> · {m.template}</span>
               <span className="num">{m.requestRef}</span>
-              <StatusBadge status={m.status} />
+              <div><StatusBadge status={m.status} /></div>
             </div>
           ))}
         </div>
