@@ -1,4 +1,15 @@
 import { Download, Search } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import type { ReactNode } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -240,4 +251,34 @@ export function exportCsv(filename: string, rows: Record<string, string | number
   a.download = filename;
   a.click();
   URL.revokeObjectURL(url);
+}
+
+export function ConfirmDelete({
+  title,
+  description,
+  onConfirm,
+  children,
+}: {
+  title: string;
+  description?: string;
+  onConfirm: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{title}</AlertDialogTitle>
+          <AlertDialogDescription>{description ?? "Cette action est définitive."}</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Annuler</AlertDialogCancel>
+          <AlertDialogAction onClick={onConfirm} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+            Supprimer
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
 }
