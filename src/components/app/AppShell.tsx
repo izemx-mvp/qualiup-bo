@@ -17,6 +17,8 @@ import { NAV } from "@/lib/nav";
 import { useStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
 
+const logoUrl = `https://id-preview--572edebe-26c8-4297-9b41-0e74a5ede599.lovable.app${logoAsset.url}`;
+
 function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const { can, agents } = useStore();
   const activeAgents = agents.filter((a) => a.active).length;
@@ -25,7 +27,14 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
     <div className="flex h-full flex-col bg-sidebar text-sidebar-foreground">
       <div className="flex items-center gap-3 px-5 py-6">
         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-surface p-1 shadow-float">
-          <img src={logoAsset.url} alt="QualiUp" className="h-full w-full object-contain" />
+          <img
+            src={logoUrl}
+            alt="QualiUp"
+            className="h-full w-full object-contain"
+            onError={(event) => {
+              event.currentTarget.src = "/favicon.png";
+            }}
+          />
         </div>
         <div className="leading-tight">
           <div className="font-display text-sm font-bold tracking-wide">QUALIUP</div>
