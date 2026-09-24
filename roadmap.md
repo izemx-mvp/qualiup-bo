@@ -6,4 +6,4 @@
 - [x] Créer les paramètres de planification de l’agent
 - [x] Créer la base de connaissances unifiée
 - [x] Créer notifications, relances et historique des messages envoyés
-- [ ] Vérifier les parcours desktop et mobile
+- [x] Vérifier les parcours desktop et mobile
