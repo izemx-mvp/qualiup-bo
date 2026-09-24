@@ -1,191 +1,34 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { CalendarDays, Settings2 } from "lucide-react";
-import { useMemo, useState } from "react";
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { exportCsv, PageHeader, Panel, StatCard, StatusBadge } from "@/components/app/ui-kit";
-import { TODAY } from "@/lib/demo-data";
+import { createFileRoute } from "@tanstack/react-router";
+import { CalendarCog, Clock3, MapPinned, Users } from "lucide-react";
+import { PageHeader, Panel, StatCard } from "@/components/app/ui-kit";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { useStore } from "@/lib/store";
 
 export const Route = createFileRoute("/planning")({
-  head: () => ({
-    meta: [
-      { title: "Planning des prélèvements — QualiUp AI Back-Office" },
-      {
-        name: "description",
-        content:
-          "Planning par préleveur et par jour, issu des propositions IA validées : créneaux, charge et laboratoires.",
-      },
-      { property: "og:title", content: "Planning des prélèvements — QualiUp" },
-      {
-        property: "og:description",
-        content: "Charge des préleveurs, créneaux planifiés et respect des règles de planification.",
-      },
-    ],
-  }),
-  component: PlanningPage,
+ head: () => ({ meta: [
+  { title: "Paramètres de planification IA — QualiUp" }, { name: "description", content: "Configurez les règles et le calendrier utilisés par l’agent IA." },
+  { property: "og:title", content: "Paramètres de planification IA — QualiUp" }, { property: "og:description", content: "Durées, créneaux, capacité et calendrier de l’agent QualiUp." },
+  { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
+ ]}), component: PlanningPage,
 });
 
 function PlanningPage() {
-  const store = useStore();
-  const dates = useMemo(
-    () => [...new Set(store.samplings.map((o) => o.date))].sort((a, b) => (a < b ? -1 : 1)),
-    [store.samplings],
-  );
-  const [date, setDate] = useState(TODAY);
-  const [lab, setLab] = useState("tous");
-
-  const ops = store.samplings.filter((o) => o.date === date && (lab === "tous" || o.lab === lab));
-  const activePreleveurs = store.preleveurs.filter((p) => p.active && (lab === "tous" || p.lab === lab));
-
-  return (
-    <>
-      <PageHeader
-        eyebrow="Opérations"
-        title="Planning"
-        description={`Créneaux confirmés après validation humaine. Règles actives : ${store.planning.workStart} — ${store.planning.workEnd}, ${store.planning.buffer} min de battement, ${store.planning.maxDaily} prélèvements max par préleveur.`}
-        actions={
-          <>
-            <Button asChild variant="outline" size="sm" className="gap-1.5">
-              <Link to="/regles">
-                <Settings2 className="h-4 w-4" /> Règles de planification
-              </Link>
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() =>
-                exportCsv(
-                  `planning-${date.replace(/\//g, "-")}.csv`,
-                  ops.map((o) => ({
-                    Operation: o.ref,
-                    Date: o.date,
-                    Creneau: o.slot,
-                    Client: store.customerName(o.customerId),
-                    Site: store.siteName(o.siteId),
-                    Preleveur: store.preleveurName(o.preleveurId),
-                    Analyse: o.analysisType,
-                    Echantillons: o.samples,
-                    Statut: o.status,
-                  })),
-                )
-              }
-            >
-              Exporter
-            </Button>
-          </>
-        }
-      />
-
-      <div className="mb-4 flex flex-wrap items-center gap-2">
-        <Select value={date} onValueChange={setDate}>
-          <SelectTrigger className="h-9 w-[190px] bg-surface">
-            <CalendarDays className="mr-2 h-4 w-4 text-muted-foreground" />
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {dates.map((d) => (
-              <SelectItem key={d} value={d}>
-                {d}
-                {d === TODAY ? " (aujourd'hui)" : ""}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Select value={lab} onValueChange={setLab}>
-          <SelectTrigger className="h-9 w-[180px] bg-surface">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="tous">Tous les laboratoires</SelectItem>
-            {store.general.labs.map((l) => (
-              <SelectItem key={l} value={l}>
-                {l}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="mb-5 grid grid-cols-2 gap-3 md:grid-cols-4">
-        <StatCard label="Opérations du jour" value={ops.length} />
-        <StatCard label="Planifiées" value={ops.filter((o) => o.status === "planifié").length} tone="info" />
-        <StatCard label="Réalisées" value={ops.filter((o) => o.status === "réalisé").length} tone="success" />
-        <StatCard label="Échantillons" value={ops.reduce((s, o) => s + o.samples, 0)} />
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
-        {activePreleveurs.map((p) => {
-          const list = ops.filter((o) => o.preleveurId === p.id);
-          const load = Math.round((list.length / p.maxDaily) * 100);
-          return (
-            <Panel
-              key={p.id}
-              title={p.name}
-              description={`${p.lab} · ${p.hours} · ${list.length}/${p.maxDaily} interventions`}
-              actions={
-                <span
-                  className={
-                    load >= 90
-                      ? "text-xs font-semibold text-destructive"
-                      : load >= 60
-                        ? "text-xs font-semibold text-warning"
-                        : "text-xs font-semibold text-success"
-                  }
-                >
-                  {load} %
-                </span>
-              }
-            >
-              <div className="space-y-2">
-                {list.map((o) => (
-                  <div key={o.id} className="rounded-md border bg-muted/30 p-3">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="num text-xs font-semibold">{o.slot}</span>
-                      <StatusBadge status={o.status} />
-                    </div>
-                    <div className="mt-1 text-sm font-medium">{store.customerName(o.customerId)}</div>
-                    <div className="text-[11px] text-muted-foreground">{store.siteName(o.siteId)}</div>
-                    <div className="mt-1 text-[11px] text-muted-foreground">
-                      {o.analysisType} · {o.samples} échantillons · {o.ref}
-                    </div>
-                    {o.status === "planifié" && (
-                      <div className="mt-2 flex gap-2">
-                        <Button size="sm" variant="outline" onClick={() => store.updateSampling(o.id, { status: "en cours" })}>
-                          Démarrer
-                        </Button>
-                        <Button size="sm" variant="ghost" onClick={() => store.updateSampling(o.id, { status: "annulé" })}>
-                          Annuler
-                        </Button>
-                      </div>
-                    )}
-                    {o.status === "en cours" && (
-                      <Button
-                        size="sm"
-                        className="mt-2"
-                        onClick={() => store.updateSampling(o.id, { status: "réalisé" })}
-                      >
-                        Marquer réalisé
-                      </Button>
-                    )}
-                  </div>
-                ))}
-                {list.length === 0 && (
-                  <p className="py-4 text-center text-xs text-muted-foreground">
-                    Aucun créneau ce jour — capacité disponible pour l'IA.
-                  </p>
-                )}
-              </div>
-            </Panel>
-          );
-        })}
-      </div>
-    </>
-  );
+ const store = useStore(); const p = store.planning;
+ return <><PageHeader eyebrow="Configuration IA" title="Paramètres de planification" description="Ces règles encadrent toutes les propositions de créneau faites par l’agent." />
+  <div className="mb-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4"><StatCard label="Durée standard" value={`${p.defaultDuration} min`} icon={Clock3}/><StatCard label="Capacité quotidienne" value={p.maxDaily} icon={Users}/><StatCard label="Début de journée" value={p.workStart} icon={CalendarCog}/><StatCard label="Regroupement par site" value="Actif" icon={MapPinned} tone="success"/></div>
+  <div className="grid gap-4 xl:grid-cols-2">
+   <Panel title="Règles de l’agent" description="Modifiez une valeur pour l’appliquer aux prochaines propositions."><div className="grid gap-5 sm:grid-cols-2">
+    <Field label="Début des créneaux"><Input type="time" value={p.workStart} onChange={(e)=>store.updatePlanning({workStart:e.target.value})}/></Field>
+    <Field label="Fin des créneaux"><Input type="time" value={p.workEnd} onChange={(e)=>store.updatePlanning({workEnd:e.target.value})}/></Field>
+    <Field label="Durée par défaut (min)"><Input type="number" value={p.defaultDuration} onChange={(e)=>store.updatePlanning({defaultDuration:Number(e.target.value)})}/></Field>
+    <Field label="Maximum par jour"><Input type="number" value={p.maxDaily} onChange={(e)=>store.updatePlanning({maxDaily:Number(e.target.value)})}/></Field>
+    <Field label="Battement entre visites (min)"><Input type="number" value={p.buffer} onChange={(e)=>store.updatePlanning({buffer:Number(e.target.value)})}/></Field>
+    <div className="flex items-center justify-between rounded-lg border bg-muted/30 p-3"><div><Label>Regrouper par site</Label><p className="text-xs text-muted-foreground">Réduit les déplacements</p></div><Switch defaultChecked /></div>
+   </div></Panel>
+   <Panel title="Calendrier connecté" description="Choisissez la source de disponibilité consultée par l’agent."><div className="space-y-5"><Field label="Fournisseur"><Select value={store.calendar.provider} onValueChange={(v)=>store.updateCalendar({provider:v as typeof store.calendar.provider})}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent><SelectItem value="QualiUp interne">Calendrier interne</SelectItem><SelectItem value="Google Calendar">Google Calendar</SelectItem><SelectItem value="Microsoft Outlook">Microsoft Outlook</SelectItem></SelectContent></Select></Field><div className="rounded-lg border bg-primary p-5 text-primary-foreground"><CalendarCog className="mb-8 h-6 w-6"/><p className="text-sm font-semibold">Synchronisation bidirectionnelle</p><p className="mt-1 text-xs text-primary-foreground/70">Les indisponibilités sont prises en compte avant toute proposition.</p></div></div></Panel>
+  </div></>;
 }
+function Field({label,children}:{label:string;children:React.ReactNode}){return <div className="space-y-2"><Label>{label}</Label>{children}</div>}
