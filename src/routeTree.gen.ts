@@ -10,33 +10,115 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ActiviteRouteImport } from './routes/activite'
+import { Route as PlanningRouteImport } from './routes/planning'
+import { Route as ReglesRouteImport } from './routes/regles'
+import { Route as ValidationRouteImport } from './routes/validation'
+import { Route as DemandesIndexRouteImport } from './routes/demandes.index'
+import { Route as DemandesIdRouteImport } from './routes/demandes.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ActiviteRoute = ActiviteRouteImport.update({
+  id: '/activite',
+  path: '/activite',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlanningRoute = PlanningRouteImport.update({
+  id: '/planning',
+  path: '/planning',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReglesRoute = ReglesRouteImport.update({
+  id: '/regles',
+  path: '/regles',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ValidationRoute = ValidationRouteImport.update({
+  id: '/validation',
+  path: '/validation',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemandesIndexRoute = DemandesIndexRouteImport.update({
+  id: '/demandes/',
+  path: '/demandes/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemandesIdRoute = DemandesIdRouteImport.update({
+  id: '/demandes/$id',
+  path: '/demandes/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/activite': typeof ActiviteRoute
+  '/planning': typeof PlanningRoute
+  '/regles': typeof ReglesRoute
+  '/validation': typeof ValidationRoute
+  '/demandes/$id': typeof DemandesIdRoute
+  '/demandes/': typeof DemandesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/activite': typeof ActiviteRoute
+  '/planning': typeof PlanningRoute
+  '/regles': typeof ReglesRoute
+  '/validation': typeof ValidationRoute
+  '/demandes/$id': typeof DemandesIdRoute
+  '/demandes': typeof DemandesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/activite': typeof ActiviteRoute
+  '/planning': typeof PlanningRoute
+  '/regles': typeof ReglesRoute
+  '/validation': typeof ValidationRoute
+  '/demandes/$id': typeof DemandesIdRoute
+  '/demandes/': typeof DemandesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/activite'
+    | '/planning'
+    | '/regles'
+    | '/validation'
+    | '/demandes/$id'
+    | '/demandes/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/activite'
+    | '/planning'
+    | '/regles'
+    | '/validation'
+    | '/demandes/$id'
+    | '/demandes'
+  id:
+    | '__root__'
+    | '/'
+    | '/activite'
+    | '/planning'
+    | '/regles'
+    | '/validation'
+    | '/demandes/$id'
+    | '/demandes/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ActiviteRoute: typeof ActiviteRoute
+  PlanningRoute: typeof PlanningRoute
+  ReglesRoute: typeof ReglesRoute
+  ValidationRoute: typeof ValidationRoute
+  DemandesIdRoute: typeof DemandesIdRoute
+  DemandesIndexRoute: typeof DemandesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +130,59 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/activite': {
+      id: '/activite'
+      path: '/activite'
+      fullPath: '/activite'
+      preLoaderRoute: typeof ActiviteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/planning': {
+      id: '/planning'
+      path: '/planning'
+      fullPath: '/planning'
+      preLoaderRoute: typeof PlanningRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/regles': {
+      id: '/regles'
+      path: '/regles'
+      fullPath: '/regles'
+      preLoaderRoute: typeof ReglesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/validation': {
+      id: '/validation'
+      path: '/validation'
+      fullPath: '/validation'
+      preLoaderRoute: typeof ValidationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demandes/': {
+      id: '/demandes/'
+      path: '/demandes'
+      fullPath: '/demandes/'
+      preLoaderRoute: typeof DemandesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demandes/$id': {
+      id: '/demandes/$id'
+      path: '/demandes/$id'
+      fullPath: '/demandes/$id'
+      preLoaderRoute: typeof DemandesIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ActiviteRoute: ActiviteRoute,
+  PlanningRoute: PlanningRoute,
+  ReglesRoute: ReglesRoute,
+  ValidationRoute: ValidationRoute,
+  DemandesIdRoute: DemandesIdRoute,
+  DemandesIndexRoute: DemandesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
