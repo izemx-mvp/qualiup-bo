@@ -20,6 +20,7 @@ import type {
   PriorityRule,
   Sampling,
   SamplingRequest,
+  SentMessage,
   SecuritySettings,
   SystemLog,
   Site,
@@ -192,6 +193,7 @@ export const requests: SamplingRequest[] = [
     status: "à valider",
     confidence: 94,
     notes: "Accès par le portail logistique. Demander le responsable qualité sur site.",
+    originalMessage: "Bonjour, nous avons besoin d’un prélèvement microbiologique demain matin à notre usine de Tassila. Il y aura 8 échantillons. Merci de nous proposer un créneau.",
     extraction: [
       { label: "Client", value: "ABC Food", confidence: 98 },
       { label: "Site", value: "Usine Agadir Zone Industrielle", confidence: 94 },
@@ -224,6 +226,7 @@ export const requests: SamplingRequest[] = [
     status: "à valider",
     confidence: 82,
     notes: "Contrôle demandé après non-conformité interne.",
+    originalMessage: "Bonjour QualiUp, contrôle urgent des surfaces aujourd’hui à notre atelier du port. Nous avons 14 points à prélever, idéalement vers 14h.",
     extraction: [
       { label: "Client", value: "Souss Marine", confidence: 96 },
       { label: "Site", value: "Atelier de transformation port", confidence: 88 },
@@ -627,13 +630,20 @@ export const kbDocuments: KbDocument[] = [
 ];
 
 export const templates: CommunicationTemplate[] = [
-  { id: "t1", name: "Confirmation de prélèvement", trigger: "Planification validée", channel: "WhatsApp", body: "Bonjour {contact}, votre prélèvement est confirmé le {date} entre {creneau} sur le site {site}. Préleveur : {preleveur}. — QualiUp", active: true },
-  { id: "t2", name: "Rappel de prélèvement", trigger: "Veille à 18:00", channel: "WhatsApp", body: "Rappel : intervention QualiUp demain {date} à {creneau} sur {site}. Merci de préparer l'accès aux points de prélèvement.", active: true },
-  { id: "t3", name: "Modification de rendez-vous", trigger: "Report validé", channel: "WhatsApp", body: "Votre intervention du {ancienne_date} est reportée au {date} à {creneau}. Merci de votre compréhension. — QualiUp", active: true },
-  { id: "t4", name: "Annulation", trigger: "Annulation validée", channel: "Email", body: "Bonjour {contact}, l'intervention prévue le {date} sur {site} est annulée. Motif : {motif}.", active: true },
-  { id: "t5", name: "Prélèvement effectué", trigger: "Opération réalisée", channel: "WhatsApp", body: "Le prélèvement sur {site} a été réalisé le {date}. {echantillons} échantillons ont été acheminés au laboratoire de {laboratoire}.", active: true },
-  { id: "t6", name: "Résultats disponibles", trigger: "Résultats publiés", channel: "Email", body: "Bonjour {contact}, les résultats de l'opération {operation} sont disponibles sur votre espace QualiUp.", active: true },
-  { id: "t7", name: "Demande de clarification", trigger: "Confiance IA < seuil", channel: "WhatsApp", body: "Bonjour, afin de planifier votre prélèvement, pourriez-vous préciser : {champs_manquants} ?", active: false },
+  { id: "t1", name: "Confirmation de prélèvement", trigger: "Planification validée", channel: "WhatsApp", body: "Bonjour {contact}, votre prélèvement est confirmé le {date} entre {creneau} sur le site {site}. Préleveur : {preleveur}. — QualiUp", active: true, approvalMode: "automatique" },
+  { id: "t2", name: "Rappel de prélèvement", trigger: "Veille à 18:00", channel: "WhatsApp", body: "Rappel : intervention QualiUp demain {date} à {creneau} sur {site}. Merci de préparer l'accès aux points de prélèvement.", active: true, approvalMode: "automatique" },
+  { id: "t3", name: "Préleveur en route", trigger: "Départ du préleveur", channel: "WhatsApp", body: "Votre préleveur {preleveur} est en route vers {site}. Arrivée estimée : {heure}.", active: true, approvalMode: "automatique" },
+  { id: "t4", name: "Demande de clarification", trigger: "Demande incomplète", channel: "WhatsApp", body: "Bonjour, afin de planifier votre prélèvement, pourriez-vous préciser : {champs_manquants} ?", active: true, approvalMode: "validation humaine" },
+  { id: "t5", name: "Prélèvement effectué", trigger: "Opération réalisée", channel: "WhatsApp", body: "Le prélèvement sur {site} a été réalisé le {date}. {echantillons} échantillons ont été acheminés au laboratoire de {laboratoire}.", active: true, approvalMode: "automatique" },
+  { id: "t6", name: "Résultats disponibles", trigger: "Résultats publiés", channel: "WhatsApp", body: "Bonjour {contact}, les résultats de l'opération {operation} sont disponibles sur votre espace QualiUp.", active: true, approvalMode: "validation humaine" },
+];
+
+export const sentMessages: SentMessage[] = [
+  { id: "m1", sentAt: "24/09/2026 10:51", customer: "Atlas Lait", requestRef: "#247", template: "Confirmation de prélèvement", channel: "WhatsApp", status: "envoyé" },
+  { id: "m2", sentAt: "24/09/2026 08:30", customer: "ABC Food", requestRef: "#241", template: "Rappel de prélèvement", channel: "WhatsApp", status: "envoyé" },
+  { id: "m3", sentAt: "24/09/2026 08:30", customer: "Hôtel Al Massira", requestRef: "#239", template: "Rappel de prélèvement", channel: "WhatsApp", status: "envoyé" },
+  { id: "m4", sentAt: "23/09/2026 16:12", customer: "Souss Marine", requestRef: "#238", template: "Prélèvement effectué", channel: "WhatsApp", status: "envoyé" },
+  { id: "m5", sentAt: "23/09/2026 11:25", customer: "Bio Farm Souss", requestRef: "#250", template: "Demande de clarification", channel: "WhatsApp", status: "à valider" },
 ];
 
 export const integrations: Integration[] = [

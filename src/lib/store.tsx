@@ -24,6 +24,7 @@ import type {
   Sampling,
   SamplingRequest,
   SecuritySettings,
+  SentMessage,
   Site,
   SystemLog,
   UserRole,
@@ -49,6 +50,7 @@ interface State {
   faqs: Faq[];
   documents: KbDocument[];
   templates: CommunicationTemplate[];
+  sentMessages: SentMessage[];
   integrations: Integration[];
   aiEvents: AiEvent[];
   systemLogs: SystemLog[];
@@ -77,6 +79,7 @@ const initialState: State = {
   faqs: seed.faqs,
   documents: seed.kbDocuments,
   templates: seed.templates,
+  sentMessages: seed.sentMessages,
   integrations: seed.integrations,
   aiEvents: seed.aiEvents,
   systemLogs: seed.systemLogs,
@@ -92,11 +95,11 @@ const initialState: State = {
 };
 
 export const ROLE_SECTIONS: Record<UserRole, string[]> = {
-  Administrateur: ["accueil", "operations", "ia", "kb", "analytics", "integrations", "configuration"],
-  "Responsable opérations": ["accueil", "operations", "ia", "analytics"],
-  "Service client": ["accueil", "operations", "kb"],
-  Direction: ["accueil", "analytics", "ia"],
-  Technique: ["accueil", "ia", "integrations", "configuration"],
+  Administrateur: ["accueil", "demandes", "planning", "connaissances", "notifications"],
+  "Responsable opérations": ["accueil", "demandes", "planning", "notifications"],
+  "Service client": ["accueil", "demandes", "connaissances", "notifications"],
+  Direction: ["accueil", "demandes", "planning", "notifications"],
+  Technique: ["accueil", "planning", "connaissances", "notifications"],
 };
 
 interface StoreApi extends State {
