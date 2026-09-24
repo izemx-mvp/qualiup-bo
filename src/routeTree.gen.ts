@@ -10,12 +10,18 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ValidationRouteImport } from './routes/validation'
 import { Route as DemandesIndexRouteImport } from './routes/demandes.index'
 import { Route as DemandesIdRouteImport } from './routes/demandes.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ValidationRoute = ValidationRouteImport.update({
+  id: '/validation',
+  path: '/validation',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemandesIndexRoute = DemandesIndexRouteImport.update({
@@ -31,30 +37,34 @@ const DemandesIdRoute = DemandesIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/validation': typeof ValidationRoute
   '/demandes/$id': typeof DemandesIdRoute
   '/demandes/': typeof DemandesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/validation': typeof ValidationRoute
   '/demandes/$id': typeof DemandesIdRoute
   '/demandes': typeof DemandesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/validation': typeof ValidationRoute
   '/demandes/$id': typeof DemandesIdRoute
   '/demandes/': typeof DemandesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/demandes/$id' | '/demandes/'
+  fullPaths: '/' | '/validation' | '/demandes/$id' | '/demandes/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/demandes/$id' | '/demandes'
-  id: '__root__' | '/' | '/demandes/$id' | '/demandes/'
+  to: '/' | '/validation' | '/demandes/$id' | '/demandes'
+  id: '__root__' | '/' | '/validation' | '/demandes/$id' | '/demandes/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ValidationRoute: typeof ValidationRoute
   DemandesIdRoute: typeof DemandesIdRoute
   DemandesIndexRoute: typeof DemandesIndexRoute
 }
@@ -66,6 +76,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/validation': {
+      id: '/validation'
+      path: '/validation'
+      fullPath: '/validation'
+      preLoaderRoute: typeof ValidationRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/demandes/': {
@@ -87,6 +104,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ValidationRoute: ValidationRoute,
   DemandesIdRoute: DemandesIdRoute,
   DemandesIndexRoute: DemandesIndexRoute,
 }
